@@ -3,6 +3,7 @@
 namespace CoreCMF\Storage;
 
 use Illuminate\Support\ServiceProvider;
+use CoreCMF\Storage\Http\Models\Config;
 
 class StorageServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,11 @@ class StorageServiceProvider extends ServiceProvider
      */
     public function initService()
     {
+        $config = new Config();
+        $config->configRegister();//注册配置信息
+        config(['filesystems.default' => 'oss']);
+        // dd(config('filesystems'));
+
         //注册providers服务
         $this->registerProviders();
     }
