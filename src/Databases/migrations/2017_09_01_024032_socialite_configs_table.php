@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class SocialiteConfigsTable extends Migration
+class StorageConfigsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class SocialiteConfigsTable extends Migration
      */
     public function up()
     {
-        Schema::create('socialite_configs', function (Blueprint $table) {
+        Schema::create('storage_configs', function (Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->string('name',30)           ->comment('驱动名称');
             $table->string('service',30)        ->comment('驱动标识')->unique() ;
@@ -32,6 +32,6 @@ class SocialiteConfigsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('socialite_configs');
+        Schema::dropIfExists('storage_configs');
     }
 }

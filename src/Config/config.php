@@ -11,6 +11,5 @@ return [
     'providers' => [
         Jacobcyl\AliOSS\AliOssServiceProvider::class,//阿里云Oss 第三方驱动
         CoreCMF\Storage\Providers\EventServiceProvider::class,//事件服务
-        CoreCMF\Storage\Providers\DriverServiceProvider::class,//驱动服务
     ],
 ];

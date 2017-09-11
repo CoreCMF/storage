@@ -26,10 +26,6 @@ class StorageServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/Databases/migrations');
         // 加载配置
         $this->mergeConfigFrom(__DIR__.'/Config/config.php', 'storage');
-        //设置发布前端文件
-        $this->publishes([
-            __DIR__.'/../resources/vendor/' => public_path('vendor'),
-        ], 'storage');
         $this->initService();
     }
 
