@@ -9,7 +9,7 @@ return [
     'serviceProvider' => CoreCMF\Storage\StorageServiceProvider::class,
     'install' => 'corecmf:storage:install',//安装artisan命令
     'providers' => [
-        Jacobcyl\AliOSS\AliOssServiceProvider::class,//阿里云Oss 第三方驱动
+        Yangyifan\Upload\UploadServiceProvider::class,
         CoreCMF\Storage\Providers\EventServiceProvider::class,//事件服务
     ],
 ];

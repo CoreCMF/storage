@@ -46,8 +46,6 @@ class StorageServiceProvider extends ServiceProvider
     {
         $config = new Config();
         $config->configRegister();//注册配置信息
-        config(['filesystems.default' => 'oss']);
-        // dd(config('filesystems'));
 
         //注册providers服务
         $this->registerProviders();
