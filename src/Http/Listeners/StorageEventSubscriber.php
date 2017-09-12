@@ -22,27 +22,7 @@ class StorageEventSubscriber
     {
         $form = $event->form;
         if ($form->event == 'login') {
-            $html = null;
-            $redirect = array_key_exists('redirect',$form->config)? encrypt($form->config['redirect']): null;
 
-            $configs = $this->configModel->where('status', 1)->get();
-            foreach ($configs as $key => $config) {
-                $url = '/OAuth/service/';
-                $url = str_replace("service",$config['service'],$url); //驱动替换后期放到model里面处理
-                if ($redirect) {
-                    $url .= $redirect;
-                }
-                $html .= '<a href="'.$url.'">
-                            <svg class="icon" aria-hidden="true">
-                                <use xlink:href="#icon-'.$config['service'].'"></use>
-                            </svg>
-                          </a>';
-            }
-            $form->htmlEnd('
-                    <div class="socialite">
-                      '.$html.'
-                    </div>
-                  ');
         }
     }
     /**
@@ -54,14 +34,7 @@ class StorageEventSubscriber
     {
         $table = $event->table;
         if ($table->event == 'package') {
-            $table->data->transform(function ($item, $key) {
-                if ($item->name == 'Socialite') {
-                    $item->rightButton = [
-                        ['title'=>'配置编辑','apiUrl'=> route('api.socialite.config.index'),'type'=>'info', 'icon'=>'fa fa-edit']
-                    ];
-                }
-                return $item;
-            });
+
         }
     }
     /**
