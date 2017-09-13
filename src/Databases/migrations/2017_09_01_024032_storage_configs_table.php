@@ -15,12 +15,15 @@ class StorageConfigsTable extends Migration
     {
         Schema::create('storage_configs', function (Blueprint $table) {
             $table->increments('id')->unsigned();
-            $table->string('name',30)           ->comment('驱动名称');
-            $table->string('driver',30)         ->comment('驱动标识')->unique() ;
+            $table->string('disks',30)          ->comment('磁盘')->unique();
+            $table->string('driver',30)         ->comment('驱动');
             $table->string('access_id',60)      ->comment('客户ID') ->nullable();
             $table->string('access_key',80)     ->comment('客户密钥')->nullable();
-            $table->string('bucket',80)         ->comment('回调地址')->nullable();
-            $table->string('endpoint',180)      ->comment('回调地址')->nullable();
+            $table->string('bucket',80)         ->comment('Bucket')->nullable();
+            $table->string('domain',160)        ->comment('域名')->nullable();
+            $table->string('app_id',80)         ->comment('腾讯云AppId')->nullable();
+            $table->string('region',8)          ->comment('腾讯云所在地域')->nullable();
+            $table->boolean('transport')        ->comment('https')->default(false);
             $table->boolean('status')           ->comment('开关状态')->default(false);
             $table->timestamps();
         });
