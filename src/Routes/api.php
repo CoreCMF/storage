@@ -16,7 +16,7 @@ Route::group(['prefix' => 'api', 'middleware' => 'api', 'namespace' => 'CoreCMF\
     | 需要用户认证路由模块
     |--------------------------------------------------------------------------
     */
-    Route::group(['prefix' => 'storage', 'as' => 'storage.', 'middleware' => ['auth:api']], function () {
+    Route::group(['prefix' => 'storage', 'as' => 'storage.', 'middleware' => ['auth:api','adminRole']], function () {
   	    Route::group(['prefix' => 'config', 'as' => 'config.'], function () {
     		    Route::post('/',                ['as' => 'index',     'uses' => 'ConfigController@index']);
             Route::post('update',           ['as' => 'update',     'uses' => 'ConfigController@update']);
