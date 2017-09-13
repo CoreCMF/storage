@@ -45,6 +45,16 @@ class Config extends Model
           'timeout'           => 60,          // 超时时间
           'bucket'            => 'corecmf',
         ]]);
-        config(['filesystems.default' => 'cos']);
+        config(['filesystems.disks.upyun' => [
+          'driver'        => 'upyun',
+          'domain'        => 'corecmf.b0.aicdn.com',//你的upyun域名
+          'username'      => 'corecmf',//UserName
+          'password'      => '001pengjie',//Password
+          'bucket'        => 'corecmf',//Bucket名字
+          'timeout'       => 130,//超时时间
+          'endpoint'      => null,//线路
+          'transport'     => 'http',//如果支持https，请填写https，如果不支持请填写http
+        ]]);
+        config(['filesystems.default' => 'oss']);
     }
 }
