@@ -19,7 +19,7 @@ class ConfigController extends Controller
     }
     public function builderForm($apiUrl)
     {
-        $driver = ['oss' => '阿里云OSS','qiniu' => '七牛云QiNiu','upyun' => '又拍云UpYun','cos' => '腾讯云Cos'];
+        $driver = ['oss' => '阿里云Oss','qiniu' => '七牛云QiNiu','upyun' => '又拍云UpYun','cos' => '腾讯云Cos'];
         return resolve('builderForm')
                 ->item(['name' => 'transport', 'type' => 'switch',    'label' => 'Https',       'placeholder' => 'SSl Https'])
                 ->item(['name' => 'disks',     'type' => 'text',     'label' => '磁盘',         'placeholder' => '磁盘名称'])
@@ -38,8 +38,8 @@ class ConfigController extends Controller
         $table = resolve('builderTable')
                     ->data($config['model'])
                     ->column(['prop' => 'id',         'label'=> 'ID',     'width'=> '55'])
-                    ->column(['prop' => 'disks',      'label'=> '磁盘',   'minWidth'=> '100'])
-                    ->column(['prop' => 'driver',     'label'=> '驱动',   'minWidth'=> '80'])
+                    ->column(['prop' => 'disks',      'label'=> '磁盘',   'minWidth'=> '120'])
+                    ->column(['prop' => 'driver',     'label'=> '驱动',   'minWidth'=> '150'])
                     ->column(['prop' => 'bucket',     'label'=> 'Bucket', 'minWidth'=> '120'])
                     ->column(['prop' => 'domain',     'label'=> '域名',   'minWidth'=> '270'])
                     ->column(['prop' => 'status',     'label'=> '状态',   'minWidth'=> '90','type' => 'status'])
