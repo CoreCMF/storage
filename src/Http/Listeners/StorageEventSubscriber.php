@@ -14,18 +14,6 @@ class StorageEventSubscriber
        $this->configModel = $configPro;
     }
     /**
-     * 处理BuilderForm登录页面渲染
-     * 监听BuilderForm事件下的login事件
-     * @translator laravelacademy.org
-     */
-    public function onBuilderFormLogin($event)
-    {
-        $form = $event->form;
-        if ($form->event == 'login') {
-
-        }
-    }
-    /**
      * [onBuilderTablePackage 后台模型table渲染处理]
      * @param  [type] $event [description]
      * @return [type]        [description]
@@ -34,7 +22,14 @@ class StorageEventSubscriber
     {
         $table = $event->table;
         if ($table->event == 'package') {
-
+            $table->data->transform(function ($item, $key) {
+                if ($item->name == 'Storage') {
+                    $item->rightButton = [
+                        ['title'=>'云存储管理','apiUrl'=> route('api.storage.config.index'),'type'=>'info', 'icon'=>'fa fa-edit']
+                    ];
+                }
+                return $item;
+            });
         }
     }
     /**
@@ -44,10 +39,6 @@ class StorageEventSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(
-            'CoreCMF\Core\Events\BuilderForm',
-            'CoreCMF\Storage\Http\Listeners\StorageEventSubscriber@onBuilderFormLogin'
-        );
         $events->listen(
             'CoreCMF\Core\Events\BuilderTable',
             'CoreCMF\Storage\Http\Listeners\StorageEventSubscriber@onBuilderTablePackage'
