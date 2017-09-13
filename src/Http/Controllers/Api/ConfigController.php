@@ -33,13 +33,11 @@ class ConfigController extends Controller
                     ->column(['prop' => 'domain',     'label'=> '域名',   'minWidth'=> '270'])
                     ->column(['prop' => 'status',     'label'=> '状态',   'minWidth'=> '90','type' => 'status'])
                     ->column(['prop' => 'rightButton','label'=> '操作',   'minWidth'=> '220','type' => 'btn'])
-                    ->topButton(['buttonType'=>'add',       'apiUrl'=> route('api.admin.system.config.add'),'title'=>'添加磁盘'])                         // 添加新增按钮
-                    ->topButton(['buttonType'=>'resume',    'apiUrl'=> route('api.admin.system.config.status')])                         // 添加启用按钮
-                    ->topButton(['buttonType'=>'forbid',    'apiUrl'=> route('api.admin.system.config.status')])                         // 添加禁用按钮
-                    ->topButton(['buttonType'=>'delete',    'apiUrl'=> route('api.admin.system.config.delete')])                         // 添加删除按钮
-                    ->rightButton(['buttonType'=>'edit',    'apiUrl'=> route('api.admin.system.config.edit')])                         // 添加编辑按钮
-                    ->rightButton(['buttonType'=>'forbid',  'apiUrl'=> route('api.admin.system.config.status')])                       // 添加禁用/启用按钮
-                    ->rightButton(['buttonType'=>'delete',  'apiUrl'=> route('api.admin.system.config.delete')])                       // 添加删除按钮
+                    ->topButton(['buttonType'=>'add',       'apiUrl'=> route('api.storage.config.add'),'title'=>'添加磁盘'])                         // 添加新增按钮
+                    ->topButton(['buttonType'=>'delete',    'apiUrl'=> route('api.storage.config.delete')])                         // 添加删除按钮
+                    ->rightButton(['buttonType'=>'edit',    'apiUrl'=> route('api.storage.config.edit')])                           // 添加编辑按钮
+                    ->rightButton(['buttonType'=>'forbid',  'apiUrl'=> route('api.storage.config.status')])                         // 添加禁用/启用按钮
+                    ->rightButton(['buttonType'=>'delete',  'apiUrl'=> route('api.storage.config.delete')])                         // 添加删除按钮
                     ->pagination(['total'=>$config['total'], 'pageSize'=>$config['pageSize'], 'pageSizes'=>$pageSizes])
                     ->searchTitle('请输入搜索内容')
                     ->searchSelect(['disks'=>'磁盘','id'=>'ID','driver'=>'驱动'])
