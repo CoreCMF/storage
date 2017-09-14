@@ -10,7 +10,32 @@ class Config extends Model
     public $table = 'storage_configs';
 
     protected $fillable = ['driver', 'access_id', 'access_key', 'bucket', 'endpoint'];
-
+    /**
+     * [findForUser 根据用户名或者邮箱、手机找到用户信息]
+     */
+    /**
+     * [findForDisks 根据disks查找数据]
+     * @param  [type] $username [description]
+     * @return [type]           [description]
+     */
+    public function findForDisks($disks){
+        return $this->where('disks', $disks)->first();
+    }
+    public function check($request){
+        if ($request->disks) {
+            $config = $this->findForDisks($request->disks);
+            $callback = '磁盘已经存在!';
+        }
+        if ($config) {
+          if ($config->id != $request->id) {
+            return resolve('builderHtml')
+                      ->withCode(422)
+                      ->callback($callback)
+                      ->response();
+          }
+        }
+        return;
+    }
     public function configRegister()
     {
         config(['filesystems.disks.oss' => [

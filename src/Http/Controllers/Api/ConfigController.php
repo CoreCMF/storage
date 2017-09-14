@@ -8,13 +8,20 @@ use Illuminate\Container\Container;
 use App\Http\Controllers\Controller;
 use CoreCMF\Admin\Models\Config as adminConfig;
 use CoreCMF\Storage\Http\Models\Config;
+use CoreCMF\Storage\Http\Validator\ConfigRules;
 
 class ConfigController extends Controller
 {
     private $configModel;
+    private $rules;
 
-    public function __construct(Config $configPro,adminConfig $adminConfigPro){
+    public function __construct(
+      Config $configPro,
+      ConfigRules $rules,
+      adminConfig $adminConfigPro
+    ){
          $this->configModel = $configPro;
+         $this->rules = $rules;
          $this->adminConfigModel = $adminConfigPro;
     }
     public function builderForm($apiUrl)
@@ -26,6 +33,7 @@ class ConfigController extends Controller
                 ->item(['name' => 'driver',    'type' => 'select',   'label' => '驱动',         'placeholder' => '驱动',
                   'options'=>$driver,       'value'=>'oss', 'apiUrl'=>$apiUrl])
                 ->item(['name' => 'bucket',    'type' => 'text',     'label' => 'Bucket',       'placeholder' => 'Bucket名字'])
+                ->rules($this->rules->index())
                 ->config('labelWidth','120px');
     }
     public function index(Request $request)
@@ -79,6 +87,14 @@ class ConfigController extends Controller
     {
         return [];
     }
+    /**
+     * [check 检查磁盘]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function check(Request $request){
+				return $this->configModel->check($request);
+		}
     /**
      * [driverRendering 根据驱动回执不同form表单]
      * @param  [type] $request [description]
