@@ -133,11 +133,11 @@ class ConfigController extends Controller
         $this->publicForm(route('api.storage.config.edit'));//添加公共form item
         $driver = $request->driver? $request->driver: $config->driver;
         $this->publicDriverForm($driver);//根据不同驱动添加不同 form item
-        $this->builderForm->apiUrl('submit',route('api.storage.config.update'))
-                          ->itemData($config->toArray());// 添加数据
+        $this->builderForm->apiUrl('submit',route('api.storage.config.update'));
         if ($request->driver) {
             return $this->builderForm->response();
         }else{
+          $this->builderForm->itemData($config->toArray());// 添加数据
           $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
           return resolve('builderHtml')->title('编辑磁盘')->item($this->builderForm)->config('layout',$layout)->response();
         }
