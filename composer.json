@@ -1,10 +1,14 @@
 {
     "name": "corecmf/storage",
     "type": "Library",
-    "description": "corecmf storage package",
+    "description": "corecmf storage package 对象云存储包支持阿里云、腾讯云、七牛云、又拍云",
     "keywords": [
         "CoreCMF",
-        "storage"
+        "storage",
+        "oss",
+        "qiniu",
+        "cos",
+        "upyun"
     ],
     "homepage": "https://github.com/CoreCMF/storage",
     "license": "laravel vue corecmf storage",

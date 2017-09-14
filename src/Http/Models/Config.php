@@ -109,6 +109,9 @@ class Config extends Model
          * @var [type]
          */
         $default = $this->where('status',1)->first();
-        config(['filesystems.default' => $default->disks]);
+        if ($default) {
+            config(['filesystems.default' => $default->disks]);
+        }
+
     }
 }
