@@ -110,6 +110,5 @@ class Config extends Model
          */
         $default = $this->where('status',1)->first();
         config(['filesystems.default' => $default->disks]);
-        dd(config('filesystems'));
     }
 }
