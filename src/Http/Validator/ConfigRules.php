@@ -12,7 +12,8 @@ class ConfigRules extends coreRules
                   callback('请输入磁盘名称');
                 } else {
                   ".$this->asyncField(route('api.storage.config.check'),'{
-                    disks:this.fromData.disks
+                    disks:this.fromData.disks,
+                    id:this.fromData.id
                   }')."
                 }
             }

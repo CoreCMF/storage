@@ -14,6 +14,7 @@ class ConfigController extends Controller
 {
     private $configModel;
     private $rules;
+    private $builderForm;
 
     public function __construct(
       Config $configPro,
@@ -23,15 +24,15 @@ class ConfigController extends Controller
          $this->configModel = $configPro;
          $this->rules = $rules;
          $this->adminConfigModel = $adminConfigPro;
+         $this->builderForm = resolve('builderForm');
     }
-    public function builderForm($apiUrl)
+    public function publicForm()
     {
         $driver = ['oss' => '阿里云Oss','qiniu' => '七牛云QiNiu','upyun' => '又拍云UpYun','cos' => '腾讯云Cos'];
-        return resolve('builderForm')
-                ->item(['name' => 'transport', 'type' => 'switch',    'label' => 'Https',       'placeholder' => 'SSl Https'])
+        $this->builderForm->item(['name' => 'transport', 'type' => 'switch',    'label' => 'Https',       'placeholder' => 'SSl Https'])
                 ->item(['name' => 'disks',     'type' => 'text',     'label' => '磁盘',         'placeholder' => '磁盘名称'])
                 ->item(['name' => 'driver',    'type' => 'select',   'label' => '驱动',         'placeholder' => '驱动',
-                  'options'=>$driver,       'value'=>'oss', 'apiUrl'=>$apiUrl])
+                  'options'=>$driver,       'value'=>'oss', 'apiUrl'=>route('api.storage.config.driver')])
                 ->item(['name' => 'bucket',    'type' => 'text',     'label' => 'Bucket',       'placeholder' => 'Bucket名字'])
                 ->rules($this->rules->index())
                 ->config('labelWidth','120px');
@@ -63,19 +64,43 @@ class ConfigController extends Controller
                     ;
         return resolve('builderHtml')->title('云存储管理器')->item($table)->response();
     }
+    /**
+     * [status 磁盘启动]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
     public function status(Request $request){
+        $this->configModel->where('status', 1)->update(['status' => 0]);//每次只能开启一个磁盘
         foreach ($request->all() as $id => $value) {
             $config = $this->configModel->where('id', '=', $id)->update(['status' => $value]);
         }
         $message = [
-                    'message'   => '云存储磁盘状态更改成功!',
+                    'message'   => '云存储磁盘更换成功!',
                     'type'      => 'success',
                 ];
         return resolve('builderHtml')->message($message)->response();
     }
+    /**
+     * [delete 删除磁盘]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function delete(Request $request){
+        foreach ($request->all() as $id => $value) {
+            $response = $this->configModel->find($id)->forceDelete();
+        }
+        $message = [
+                    'message'   => '磁盘删除成功!',
+                    'type'      => 'success',
+                ];
+        return resolve('builderHtml')->message($message)->response();
+    }
+    /**
+     * [add 新增磁盘]
+     */
     public function add(){
         $builderForm = $this->builderForm(route('api.storage.config.driver'))
-                      ->apiUrl('submit',route('api.admin.system.config.store'));
+                      ->apiUrl('submit',route('api.storage.config.store'));
 
         $form = $builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'endpoint',    'placeholder' => '你的阿里云独立oss域名或者去掉bucket.外网域名'])
                 ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'accessKeyId',     'placeholder' => 'accessKeyId'])
@@ -83,9 +108,77 @@ class ConfigController extends Controller
         $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
         return resolve('builderHtml')->title('新增磁盘')->item($form)->config('layout',$layout)->response();
     }
+    public function store(Request $request)
+    {
+        $config = $this->configModel->create($request->all());
+        $message = [
+                    'message'   => '添加磁盘成功！!',
+                    'type'      => 'success',
+                ];
+
+        return resolve('builderHtml')->message($message)->response();
+    }
+    /**
+     * [edit 编辑云磁盘配置]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function edit(Request $request)
+    {
+        $config = $this->configModel->find($request->id);
+        $this->builderForm->item(['name' => 'id',      	 'type' => 'hidden',     'label' => 'ID' ]);//添加id
+        $this->publicForm();//添加公共form item
+        $this->publicDriverForm($config->driver);//根据不同驱动添加不同 form item
+        $this->builderForm->itemData($config->toArray());// 添加数据
+        $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
+        return resolve('builderHtml')->title('编辑磁盘')->item($this->builderForm)->config('layout',$layout)->response();
+    }
     public function update(Request $request)
     {
         return [];
+    }
+    /**
+     * [driverForm 根据驱动渲染form]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function driverForm(Request $request)
+    {
+        $this->builderForm->item(['name' => 'id',      	 'type' => 'hidden',     'label' => 'ID']);//添加id
+        $this->publicForm();//添加公共form item
+        return $this->publicDriverForm($request->driver)->response();
+    }
+    /**
+     * [publicDriverForm 根据驱动渲染不同form item]
+     * @param  [type] $request [description]
+     * @return [type]          [description]
+     */
+    public function publicDriverForm($driver)
+    {
+        switch ($driver) {
+          case 'qiniu':
+            return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的七牛域名'])
+                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'AccessKey',     'placeholder' => 'AccessKey'])
+                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'SecretKey',    'placeholder' => 'SecretKey']);
+            break;
+          case 'upyun':
+            return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的upyun域名'])
+                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => '用户名',     'placeholder' => '授权用户名'])
+                    ->item(['name' => 'access_key','type' => 'text',     'label' => '用户密码',    'placeholder' => '授权用户密码']);
+            break;
+          case 'cos':
+            return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的 COS 域名'])
+                    ->item(['name' => 'app_id',   'type' => 'text',     'label' => 'AppId',     'placeholder' => 'app_id'])
+                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'AccessId',     'placeholder' => 'access_id'])
+                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'AccessKey',    'placeholder' => 'access_key'])
+                    ->item(['name' => 'region',     'type' => 'text',     'label' => '区域',        'placeholder' => '设置COS所在的区域如：北京->bj']);
+            break;
+          case 'oss':
+            return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'endpoint',    'placeholder' => '你的阿里云独立oss域名或者去掉bucket.外网域名'])
+                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'accessKeyId',     'placeholder' => 'accessKeyId'])
+                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'accessKeySecret',    'placeholder' => 'accessKeySecret']);
+            break;
+        }
     }
     /**
      * [check 检查磁盘]
@@ -93,45 +186,7 @@ class ConfigController extends Controller
      * @return [type]           [description]
      */
     public function check(Request $request){
-				return $this->configModel->check($request);
-		}
-    /**
-     * [driverRendering 根据驱动回执不同form表单]
-     * @param  [type] $request [description]
-     * @return [type]          [description]
-     */
-    public function driverForm(Request $request)
-    {
-        $builderForm = $this->builderForm(route('api.storage.config.driver'))
-                    ->apiUrl('submit',route('api.admin.system.config.store'));
-        switch ($request->driver) {
-          case 'qiniu':
-            return $builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的七牛域名'])
-                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'AccessKey',     'placeholder' => 'AccessKey'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'SecretKey',    'placeholder' => 'SecretKey'])
-                    ->response();
-            break;
-          case 'upyun':
-            return $builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的upyun域名'])
-                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => '用户名',     'placeholder' => '授权用户名'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => '用户密码',    'placeholder' => '授权用户密码'])
-                    ->response();
-            break;
-          case 'cos':
-            return $builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的 COS 域名'])
-                    ->item(['name' => 'app_id',   'type' => 'text',     'label' => 'AppId',     'placeholder' => 'app_id'])
-                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'AccessId',     'placeholder' => 'access_id'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'AccessKey',    'placeholder' => 'access_key'])
-                    ->item(['name' => 'region',     'type' => 'text',     'label' => '区域',        'placeholder' => '设置COS所在的区域如：北京->bj'])
-                    ->response();
-            break;
-          case 'oss':
-            return $builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'endpoint',    'placeholder' => '你的阿里云独立oss域名或者去掉bucket.外网域名'])
-                    ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'accessKeyId',     'placeholder' => 'accessKeyId'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'accessKeySecret',    'placeholder' => 'accessKeySecret'])
-                    ->response();
-            break;
-        }
+        return $this->configModel->check($request);
     }
 
 }

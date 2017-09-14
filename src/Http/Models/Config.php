@@ -9,7 +9,7 @@ class Config extends Model
 {
     public $table = 'storage_configs';
 
-    protected $fillable = ['driver', 'access_id', 'access_key', 'bucket', 'endpoint'];
+    protected $fillable = ['disks', 'driver', 'access_id', 'access_key', 'bucket', 'domain', 'app_id', 'region', 'transport'];
     /**
      * [findForUser 根据用户名或者邮箱、手机找到用户信息]
      */
