@@ -26,13 +26,13 @@ class ConfigController extends Controller
          $this->adminConfigModel = $adminConfigPro;
          $this->builderForm = resolve('builderForm');
     }
-    public function publicForm()
+    public function publicForm($apiUrl)
     {
         $driver = ['oss' => '阿里云Oss','qiniu' => '七牛云QiNiu','upyun' => '又拍云UpYun','cos' => '腾讯云Cos'];
         $this->builderForm->item(['name' => 'transport', 'type' => 'switch',    'label' => 'Https',       'placeholder' => 'SSl Https'])
                 ->item(['name' => 'disks',     'type' => 'text',     'label' => '磁盘',         'placeholder' => '磁盘名称'])
                 ->item(['name' => 'driver',    'type' => 'select',   'label' => '驱动',         'placeholder' => '驱动',
-                  'options'=>$driver,       'value'=>'oss', 'apiUrl'=>route('api.storage.config.driver')])
+                  'options'=>$driver, 'apiUrl'=>$apiUrl])
                 ->item(['name' => 'bucket',    'type' => 'text',     'label' => 'Bucket',       'placeholder' => 'Bucket名字'])
                 ->rules($this->rules->index())
                 ->config('labelWidth','120px');
@@ -98,15 +98,18 @@ class ConfigController extends Controller
     /**
      * [add 新增磁盘]
      */
-    public function add(){
-        $builderForm = $this->builderForm(route('api.storage.config.driver'))
-                      ->apiUrl('submit',route('api.storage.config.store'));
-
-        $form = $builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'endpoint',    'placeholder' => '你的阿里云独立oss域名或者去掉bucket.外网域名'])
-                ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'accessKeyId',     'placeholder' => 'accessKeyId'])
-                ->item(['name' => 'access_key','type' => 'text',     'label' => 'accessKeySecret',    'placeholder' => 'accessKeySecret']);
-        $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
-        return resolve('builderHtml')->title('新增磁盘')->item($form)->config('layout',$layout)->response();
+    public function add(Request $request){
+        $driver = $request->driver? $request->driver: 'oss';
+        $this->publicForm(route('api.storage.config.add'));//添加公共form item
+        $this->publicDriverForm($driver);//根据不同驱动添加不同 form item
+        $this->builderForm->apiUrl('submit',route('api.storage.config.store'))
+                  ->itemData(['driver'=>'oss']);// 增加默认驱动
+        if ($request->driver) {
+            return $this->builderForm->response();
+        }else{
+          $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
+          return resolve('builderHtml')->title('新增磁盘')->item($this->builderForm)->config('layout',$layout)->response();
+        }
     }
     public function store(Request $request)
     {
@@ -127,26 +130,44 @@ class ConfigController extends Controller
     {
         $config = $this->configModel->find($request->id);
         $this->builderForm->item(['name' => 'id',      	 'type' => 'hidden',     'label' => 'ID' ]);//添加id
-        $this->publicForm();//添加公共form item
-        $this->publicDriverForm($config->driver);//根据不同驱动添加不同 form item
-        $this->builderForm->itemData($config->toArray());// 添加数据
-        $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
-        return resolve('builderHtml')->title('编辑磁盘')->item($this->builderForm)->config('layout',$layout)->response();
+        $this->publicForm(route('api.storage.config.edit'));//添加公共form item
+        $driver = $request->driver? $request->driver: $config->driver;
+        $this->publicDriverForm($driver);//根据不同驱动添加不同 form item
+        $this->builderForm->apiUrl('submit',route('api.storage.config.update'))
+                          ->itemData($config->toArray());// 添加数据
+        if ($request->driver) {
+            return $this->builderForm->response();
+        }else{
+          $layout = ['xs' => 24, 'sm' => 20, 'md' => 18, 'lg' => 16];
+          return resolve('builderHtml')->title('编辑磁盘')->item($this->builderForm)->config('layout',$layout)->response();
+        }
     }
     public function update(Request $request)
     {
-        return [];
+        $input = $request->all();
+        $response = $this->configModel->find($input['id'])->fill($input)->save();
+        if ($response) {
+            $message = [
+                            'message'   => '编辑云磁盘成功！!',
+                            'type'      => 'success',
+                        ];
+        }else{
+            $message = [
+                            'message'   => '编辑云磁盘失败！!',
+                            'type'      => 'error',
+                        ];
+        }
+
+        return resolve('builderHtml')->message($message)->response();
     }
     /**
      * [driverForm 根据驱动渲染form]
      * @param  Request $request [description]
      * @return [type]           [description]
      */
-    public function driverForm(Request $request)
+    public function driverForm($driver)
     {
-        $this->builderForm->item(['name' => 'id',      	 'type' => 'hidden',     'label' => 'ID']);//添加id
-        $this->publicForm();//添加公共form item
-        return $this->publicDriverForm($request->driver)->response();
+        return $this->publicDriverForm($driver)->response();
     }
     /**
      * [publicDriverForm 根据驱动渲染不同form item]
@@ -159,24 +180,24 @@ class ConfigController extends Controller
           case 'qiniu':
             return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的七牛域名'])
                     ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'AccessKey',     'placeholder' => 'AccessKey'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'SecretKey',    'placeholder' => 'SecretKey']);
+                    ->item(['name' => 'access_key','type' => 'password',     'label' => 'SecretKey',    'placeholder' => 'SecretKey']);
             break;
           case 'upyun':
             return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的upyun域名'])
                     ->item(['name' => 'access_id', 'type' => 'text',     'label' => '用户名',     'placeholder' => '授权用户名'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => '用户密码',    'placeholder' => '授权用户密码']);
+                    ->item(['name' => 'access_key','type' => 'password',     'label' => '用户密码',    'placeholder' => '授权用户密码']);
             break;
           case 'cos':
             return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'domain',          'placeholder' => '你的 COS 域名'])
                     ->item(['name' => 'app_id',   'type' => 'text',     'label' => 'AppId',     'placeholder' => 'app_id'])
                     ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'AccessId',     'placeholder' => 'access_id'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'AccessKey',    'placeholder' => 'access_key'])
+                    ->item(['name' => 'access_key','type' => 'password',     'label' => 'AccessKey',    'placeholder' => 'access_key'])
                     ->item(['name' => 'region',     'type' => 'text',     'label' => '区域',        'placeholder' => '设置COS所在的区域如：北京->bj']);
             break;
           case 'oss':
             return $this->builderForm->item(['name' => 'domain', 'type' => 'text',    'label' => 'endpoint',    'placeholder' => '你的阿里云独立oss域名或者去掉bucket.外网域名'])
                     ->item(['name' => 'access_id', 'type' => 'text',     'label' => 'accessKeyId',     'placeholder' => 'accessKeyId'])
-                    ->item(['name' => 'access_key','type' => 'text',     'label' => 'accessKeySecret',    'placeholder' => 'accessKeySecret']);
+                    ->item(['name' => 'access_key','type' => 'password',     'label' => 'accessKeySecret',    'placeholder' => 'accessKeySecret']);
             break;
         }
     }

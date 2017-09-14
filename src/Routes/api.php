@@ -25,7 +25,6 @@ Route::group(['prefix' => 'api', 'middleware' => 'api', 'namespace' => 'CoreCMF\
     		    Route::post('store',            ['as' => 'store',      'uses' => 'ConfigController@store']);
     		    Route::post('edit',             ['as' => 'edit',       'uses' => 'ConfigController@edit']);
     		    Route::post('update',           ['as' => 'update',     'uses' => 'ConfigController@update']);
-            Route::post('driver',           ['as' => 'driver',     'uses' => 'ConfigController@driverForm']);
             Route::post('check',            ['as' => 'check',      'uses' => 'ConfigController@check']);
   		  });
 	 });

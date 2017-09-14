@@ -10,9 +10,11 @@ class Config extends Model
     public $table = 'storage_configs';
 
     protected $fillable = ['disks', 'driver', 'access_id', 'access_key', 'bucket', 'domain', 'app_id', 'region', 'transport'];
-    /**
-     * [findForUser 根据用户名或者邮箱、手机找到用户信息]
-     */
+
+    public function getTransportAttribute($value)
+    {
+        return (boolean)$value;
+    }
     /**
      * [findForDisks 根据disks查找数据]
      * @param  [type] $username [description]
