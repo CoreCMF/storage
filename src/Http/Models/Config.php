@@ -44,6 +44,16 @@ class Config extends Model
      */
     public function configRegister()
     {
+        if (Schema::hasTable('storage_configs')) {
+            $this->filesystemsRegister();
+        }
+    }
+    /**
+     * [filesystemsRegister filesystems驱动注册]
+     * @return [type] [description]
+     */
+    public function filesystemsRegister()
+    {
         /**
          * [加载云磁盘配置]
          * @var [type]
@@ -112,6 +122,5 @@ class Config extends Model
         if ($default) {
             config(['filesystems.default' => $default->disks]);
         }
-
     }
 }
