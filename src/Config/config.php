@@ -8,6 +8,7 @@ return [
     'version' => 'v1.1.6',
     'serviceProvider' => CoreCMF\Storage\StorageServiceProvider::class,
     'install' => 'corecmf:storage:install',//安装artisan命令
+    'uninstall' => 'corecmf:storage:uninstall',//卸载artisan命令
     'providers' => [
         Yangyifan\Upload\UploadServiceProvider::class,//驱动服务
         CoreCMF\Storage\Providers\EventServiceProvider::class,//事件服务
