@@ -40,7 +40,7 @@ class StorageEventSubscriber
     public function subscribe($events)
     {
         $events->listen(
-            'CoreCMF\Core\Events\BuilderTable',
+            'CoreCMF\Core\Support\Events\BuilderTable',
             'CoreCMF\Storage\Http\Listeners\StorageEventSubscriber@onBuilderTablePackage'
         );
     }
