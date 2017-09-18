@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Container\Container;
 
 use App\Http\Controllers\Controller;
-use CoreCMF\Admin\Models\Config as adminConfig;
+use CoreCMF\Admin\Http\Models\Config as adminConfig;
 use CoreCMF\Storage\Http\Models\Config;
 use CoreCMF\Storage\Http\Validator\ConfigRules;
 
