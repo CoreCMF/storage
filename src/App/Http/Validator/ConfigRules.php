@@ -1,6 +1,6 @@
 <?php
 
-namespace CoreCMF\Storage\Http\Validator;
+namespace CoreCMF\Storage\App\Http\Validator;
 
 use CoreCMF\Core\Support\Validator\Rules as coreRules;
 class ConfigRules extends coreRules

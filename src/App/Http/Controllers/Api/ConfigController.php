@@ -1,14 +1,14 @@
 <?php
 
-namespace CoreCMF\Storage\Http\Controllers\Api;
+namespace CoreCMF\Storage\App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use Illuminate\Container\Container;
 
 use App\Http\Controllers\Controller;
 use CoreCMF\Admin\App\Models\Config as adminConfig;
-use CoreCMF\Storage\Http\Models\Config;
-use CoreCMF\Storage\Http\Validator\ConfigRules;
+use CoreCMF\Storage\App\Models\Config;
+use CoreCMF\Storage\App\Http\Validator\ConfigRules;
 
 class ConfigController extends Controller
 {

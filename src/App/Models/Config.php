@@ -1,6 +1,6 @@
 <?php
 
-namespace CoreCMF\Storage\Http\Models;
+namespace CoreCMF\Storage\App\Models;
 
 use Schema;
 use Illuminate\Database\Eloquent\Model;

@@ -3,13 +3,13 @@
 namespace CoreCMF\Storage;
 
 use Illuminate\Support\ServiceProvider;
-use CoreCMF\Storage\Http\Models\Config;
+use CoreCMF\Storage\App\Models\Config;
 
 class StorageServiceProvider extends ServiceProvider
 {
     protected $commands = [
-        \CoreCMF\Storage\Http\Console\InstallCommand::class,
-        \CoreCMF\Storage\Http\Console\UninstallCommand::class,
+        \CoreCMF\Storage\App\Console\InstallCommand::class,
+        \CoreCMF\Storage\App\Console\UninstallCommand::class,
     ];
     /**
      * Perform post-registration booting of services.

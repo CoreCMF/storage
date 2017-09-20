@@ -1,8 +1,8 @@
 <?php
 
-namespace CoreCMF\Storage\Http\Listeners;
+namespace CoreCMF\Storage\App\Listeners;
 
-use CoreCMF\Storage\Http\Models\Config;
+use CoreCMF\Storage\App\Models\Config;
 /**
  * [SocialiteEventSubscriber 社会登录事件订阅者]
  */
@@ -41,7 +41,7 @@ class StorageEventSubscriber
     {
         $events->listen(
             'CoreCMF\Core\Support\Events\BuilderTable',
-            'CoreCMF\Storage\Http\Listeners\StorageEventSubscriber@onBuilderTablePackage'
+            'CoreCMF\Storage\App\Listeners\StorageEventSubscriber@onBuilderTablePackage'
         );
     }
 

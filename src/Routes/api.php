@@ -10,7 +10,7 @@
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::group(['prefix' => 'api', 'middleware' => 'api', 'namespace' => 'CoreCMF\Storage\Http\Controllers\Api', 'as' => 'api.'], function () {
+Route::group(['prefix' => 'api', 'middleware' => 'api', 'namespace' => 'CoreCMF\Storage\App\Http\Controllers\Api', 'as' => 'api.'], function () {
     /*
     |--------------------------------------------------------------------------
     | 需要用户认证路由模块

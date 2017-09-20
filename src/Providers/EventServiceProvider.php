@@ -32,6 +32,6 @@ class EventServiceProvider extends ServiceProvider
      * @var [type]
      */
     protected $subscribe = [
-         'CoreCMF\Storage\Http\Listeners\StorageEventSubscriber',
+         'CoreCMF\Storage\App\Listeners\StorageEventSubscriber',
     ];
 }
