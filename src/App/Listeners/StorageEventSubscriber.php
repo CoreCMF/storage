@@ -3,6 +3,7 @@
 namespace CoreCMF\Storage\App\Listeners;
 
 use CoreCMF\Storage\App\Models\Config;
+
 /**
  * [SocialiteEventSubscriber 社会登录事件订阅者]
  */
@@ -10,8 +11,9 @@ class StorageEventSubscriber
 {
     private $configModel;
 
-    public function __construct(Config $configPro){
-       $this->configModel = $configPro;
+    public function __construct(Config $configPro)
+    {
+        $this->configModel = $configPro;
     }
     /**
      * [onBuilderTablePackage 后台模型table渲染处理]
@@ -25,7 +27,13 @@ class StorageEventSubscriber
             $table->data->transform(function ($item, $key) {
                 if ($item->name == 'Storage') {
                     $item->rightButton = [
-                        ['title'=>'云存储管理','apiUrl'=> route('api.storage.config.index'),'type'=>'info', 'icon'=>'fa fa-edit']
+                        [
+                            'title'=>'云存储管理',
+                            'apiUrl'=> route('api.storage.config.index'),
+                            'type'=>'info',
+                            'icon'=>'fa fa-edit',
+                            'method'=>'dialog'
+                        ]
                     ];
                 }
                 return $item;
@@ -44,5 +52,4 @@ class StorageEventSubscriber
             'CoreCMF\Storage\App\Listeners\StorageEventSubscriber@onBuilderTablePackage'
         );
     }
-
 }

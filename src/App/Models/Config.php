@@ -20,21 +20,23 @@ class Config extends Model
      * @param  [type] $username [description]
      * @return [type]           [description]
      */
-    public function findForDisks($disks){
+    public function findForDisks($disks)
+    {
         return $this->where('disks', $disks)->first();
     }
-    public function check($request){
+    public function check($request)
+    {
         if ($request->disks) {
             $config = $this->findForDisks($request->disks);
             $callback = '磁盘已经存在!';
         }
         if ($config) {
-          if ($config->id != $request->id) {
-            return resolve('builderHtml')
+            if ($config->id != $request->id) {
+                return resolve('builderHtml')
                       ->withCode(422)
                       ->callback($callback)
                       ->response();
-          }
+            }
         }
         return;
     }
@@ -62,18 +64,18 @@ class Config extends Model
             $transport = $disks->transport? 'https': 'http';
             switch ($disks->driver) {
               case 'oss':
-                  $isCName = strstr($disks->domain,"aliyuncs.com")? false: true;//不包含阿里云自动启用自定义域名
+                  $isCName = strstr($disks->domain, "aliyuncs.com")? false: true;//不包含阿里云自动启用自定义域名
                   config(['filesystems.disks.'.$disks->disks => [
-                        'driver'			=> 'oss',
-                        'accessKeyId'		=> $disks->access_id,
-                        'accessKeySecret' 	=> $disks->access_key,
-                        'endpoint'			=> $disks->domain,
-                        'isCName'			=> $isCName,
-                        'securityToken'		=> null,
+                        'driver'            => 'oss',
+                        'accessKeyId'        => $disks->access_id,
+                        'accessKeySecret'    => $disks->access_key,
+                        'endpoint'            => $disks->domain,
+                        'isCName'            => $isCName,
+                        'securityToken'        => null,
                         'bucket'            => $disks->bucket,
                         'timeout'           => '5184000',
                         'connectTimeout'    => '10',
-                        'transport'     	=> $transport,//如果支持https，请填写https，如果不支持请填写http
+                        'transport'         => $transport,//如果支持https，请填写https，如果不支持请填写http
                         'max_keys'          => 1000,//max-keys用于限定此次返回object的最大数，如果不设定，默认为100，max-keys取值不能大于1000
                   ]]);
                 break;
@@ -101,13 +103,13 @@ class Config extends Model
                 break;
               case 'cos':
                 config(['filesystems.disks.'.$disks->disks => [
-                  'driver'			=> 'cos',
+                  'driver'            => 'cos',
                   'domain'            => $disks->domain,      // 你的 COS 域名
                   'app_id'            => $disks->app_id,
                   'secret_id'         => $disks->access_id,
                   'secret_key'        => $disks->access_key,
                   'region'            => $disks->region,        // 设置COS所在的区域
-                  'transport'     	  => $transport,      // 如果支持 https，请填写 https，如果不支持请填写 http
+                  'transport'           => $transport,      // 如果支持 https，请填写 https，如果不支持请填写 http
                   'timeout'           => 60,          // 超时时间
                   'bucket'            => $disks->bucket,
                 ]]);
@@ -118,7 +120,7 @@ class Config extends Model
          * [$defaultDisks 挂载默认磁盘]
          * @var [type]
          */
-        $default = $this->where('status',1)->first();
+        $default = $this->where('status', 'open')->first();
         if ($default) {
             config(['filesystems.default' => $default->disks]);
         }
