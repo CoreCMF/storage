@@ -24,8 +24,6 @@ class StorageServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/Routes/api.php');
         //迁移文件配置
         $this->loadMigrationsFrom(__DIR__.'/Databases/migrations');
-        // 加载配置
-        $this->mergeConfigFrom(__DIR__.'/Config/config.php', 'storage');
         $this->initService();
     }
 
@@ -36,7 +34,6 @@ class StorageServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
     /**
      * 初始化服务
@@ -45,18 +42,5 @@ class StorageServiceProvider extends ServiceProvider
     {
         $config = new Config();
         $config->configRegister();//注册配置信息
-
-        //注册providers服务
-        $this->registerProviders();
-    }
-    /**
-     * 注册引用服务
-     */
-    public function registerProviders()
-    {
-        $providers = config('storage.providers');
-        foreach ($providers as $provider) {
-            $this->app->register($provider);
-        }
     }
 }

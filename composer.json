@@ -47,6 +47,20 @@
     "extra": {
         "branch-alias": {
             "dev-master": "2.3.x-dev"
+        },
+        "corecmf": {
+            "name": "Storage",
+            "title": "云存储",
+            "description": "第三方云存储磁盘管理工具包括阿里云oss、七牛云存储、腾讯云cos、又拍云存储upyun",
+            "author": "BigRocs",
+            "version": "2.3.2",
+            "providers": [
+                "CoreCMF\\Storage\\StorageServiceProvider",
+                "CoreCMF\\Storage\\Providers\\EventServiceProvider",
+                "Yangyifan\\Upload\\UploadServiceProvider"
+            ],
+            "install": "corecmf:storage:install",
+            "uninstall": "corecmf:storage:uninstall"
         }
     },
     "config": {
