@@ -32,6 +32,7 @@ class StorageEventSubscriber
                             'apiUrl'=> route('api.storage.config.index'),
                             'type'=>'info',
                             'icon'=>'fa fa-edit',
+                            'width'=> '1236px',
                             'method'=>'dialog'
                         ]
                     ];

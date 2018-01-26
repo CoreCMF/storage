@@ -17,15 +17,15 @@ Route::group(['prefix' => 'api', 'middleware' => 'api', 'namespace' => 'CoreCMF\
     |--------------------------------------------------------------------------
     */
     Route::group(['prefix' => 'storage', 'as' => 'storage.', 'middleware' => ['auth:api','adminRole']], function () {
-  	    Route::group(['prefix' => 'config', 'as' => 'config.'], function () {
-    		    Route::post('/',                ['as' => 'index',     'uses' => 'ConfigController@index']);
-            Route::post('status',           ['as' => 'status',     'uses' => 'ConfigController@status']);
-    		    Route::post('delete',           ['as' => 'delete',     'uses' => 'ConfigController@delete']);
-    		    Route::post('add',              ['as' => 'add',        'uses' => 'ConfigController@add']);
-    		    Route::post('store',            ['as' => 'store',      'uses' => 'ConfigController@store']);
-    		    Route::post('edit',             ['as' => 'edit',       'uses' => 'ConfigController@edit']);
-    		    Route::post('update',           ['as' => 'update',     'uses' => 'ConfigController@update']);
-            Route::post('check',            ['as' => 'check',      'uses' => 'ConfigController@check']);
-  		  });
-	 });
+        Route::group(['prefix' => 'config', 'as' => 'config.'], function () {
+            Route::post('/', ['as' => 'index',     'uses' => 'ConfigController@index']);
+            Route::post('status', ['as' => 'status',     'uses' => 'ConfigController@status']);
+            Route::post('delete', ['as' => 'delete',     'uses' => 'ConfigController@delete']);
+            Route::post('add', ['as' => 'add',        'uses' => 'ConfigController@add']);
+            Route::post('store', ['as' => 'store',      'uses' => 'ConfigController@store']);
+            Route::post('edit', ['as' => 'edit',       'uses' => 'ConfigController@edit']);
+            Route::post('update', ['as' => 'update',     'uses' => 'ConfigController@update']);
+            Route::post('check', ['as' => 'check',      'uses' => 'ConfigController@check']);
+        });
+    });
 });
