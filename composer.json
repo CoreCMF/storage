@@ -11,7 +11,7 @@
         "upyun"
     ],
     "homepage": "https://github.com/CoreCMF/storage",
-    "license": "laravel vue corecmf storage",
+    "license": "MIT",
     "authors": [
         {
             "name": "bigrocs",
